@@ -1,7 +1,5 @@
 package com.flairstech.workshop;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.persistence.*;
 
 @Entity
@@ -15,23 +13,18 @@ public class Country {
     private String code;
 
     @Column(name="name")
-    @JsonProperty
     private String name;
 
     @Column(name="continent")
-    @JsonProperty
     private String continent;
 
     @Column(name="population")
-    @JsonProperty
     private String population;
 
     @Column(name="life_expectancy")
-    @JsonProperty
     private String lifeExpectancy;
 
     @Column(name="country_language")
-    @JsonProperty
     private String countryLanguage;
 
     public int getCapital() {
