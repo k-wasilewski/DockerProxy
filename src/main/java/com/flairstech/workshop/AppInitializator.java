@@ -1,6 +1,8 @@
 package com.flairstech.workshop;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.task.TaskSchedulerCustomizer;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -9,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
@@ -19,17 +22,25 @@ public class AppInitializator {
 
     //Docker proxy configuration
     String container;
-    final String CHECK_DOCKER_PORT_AVAILABILITY_CMD = "docker ps --filter \"expose=5432\"";
-    final String CHECK_DOCKER_PORT_AVAILABILITY_EXCEPTION = "Port 5432 is already in use by another Docker container";
-    final String CHECK_PORT_AVAILABILITY_CMD = "lsof -i:5432";
-    final String CHECK_PORT_AVAILABILITY_EXCEPTION = "Port 5432 is already in use";
-    final String CONTAINER_IN_USE_EXCEPTION = "Container with name 'countriesdocker' is already in use";
-    final String RUN_DOCKER_IMAGE_CMD = "docker run -d --name=countriesdocker -p 5432:5432 ghusta/postgres-world-db:2.4";
-    final String RUN_DOCKER_IMAGE_EXCEPTION = "Exception during running database Docker image";
-    final String STOP_DOCKER_CONTAINER_CMD = "docker stop "+container;
-    final String STOP_DOCKER_CONTAINER_EXCEPTION = "Exception during stopping database Docker container";
-    final String REMOVE_DOCKER_CONTAINER_CMD = "docker rm "+container;
-    final String REMOVE_DOCKER_CONTAINER_EXCEPTION = "Exception during removing database Docker container";
+    final static String CHECK_DOCKER_PORT_AVAILABILITY_CMD = "docker ps --filter \"expose=5432\"";
+    final static String CHECK_DOCKER_PORT_AVAILABILITY_EXCEPTION = "Port 5432 is already in use by another Docker container";
+    final static String CHECK_PORT_AVAILABILITY_CMD = "lsof -i:5432";
+    final static String CHECK_PORT_AVAILABILITY_EXCEPTION = "Port 5432 is already in use";
+    final static String CONTAINER_IN_USE_EXCEPTION = "Container with name 'countriesdocker' is already in use";
+    final static String RUN_DOCKER_IMAGE_CMD = "docker run -d --name=countriesdocker -p 5432:5432 ghusta/postgres-world-db:2.4";
+    final static String RUN_DOCKER_IMAGE_EXCEPTION = "Exception during running database Docker image";
+    final static String STOP_DOCKER_CONTAINER_CMD = "docker stop ";
+    final static String STOP_DOCKER_CONTAINER_EXCEPTION = "Exception during stopping database Docker container";
+    final static String REMOVE_DOCKER_CONTAINER_CMD = "docker rm ";
+    final static String REMOVE_DOCKER_CONTAINER_EXCEPTION = "Exception during removing database Docker container";
+
+    private static String getStopDockerContainerCmd(String container) {
+        return String.format(STOP_DOCKER_CONTAINER_CMD+"%s", container);
+    }
+
+    private static String getRemoveDockerContainerCmd(String container) {
+        return String.format(REMOVE_DOCKER_CONTAINER_CMD+"%s", container);
+    }
 
     @PostConstruct
     private void init() throws Exception {
@@ -43,19 +54,22 @@ public class AppInitializator {
         } catch (Exception e) {
             throw new IOException(RUN_DOCKER_IMAGE_EXCEPTION);
         }
+
+        if (container.equals(CONTAINER_IN_USE_EXCEPTION))
+            throw new IOException(CONTAINER_IN_USE_EXCEPTION);
     }
 
     @PreDestroy
     private void destr() throws IOException {
         if (container!=null) {
             try {
-                executeBashCommand(STOP_DOCKER_CONTAINER_CMD);
+                executeBashCommand(getStopDockerContainerCmd(container));
             } catch (Exception e) {
                 throw new IOException(STOP_DOCKER_CONTAINER_EXCEPTION);
             }
 
             try {
-                executeBashCommand(REMOVE_DOCKER_CONTAINER_CMD);
+                executeBashCommand(getRemoveDockerContainerCmd(container));
             } catch (Exception e) {
                 throw new IOException(REMOVE_DOCKER_CONTAINER_EXCEPTION);
             }
@@ -68,23 +82,23 @@ public class AppInitializator {
 
         process = Runtime.getRuntime().exec(command);
 
-        StreamGobbler streamGobbler =
-                new StreamGobbler(process.getInputStream(), (output) -> {
+        StreamGobbler streamGobbler = new StreamGobbler(process.getInputStream(), (output) -> {
                     cmdOutput[0] = output;
                 });
         Executors.newSingleThreadExecutor().submit(streamGobbler);
         int exitCode = process.waitFor();
-        assert exitCode == 0;
+        System.out.println(exitCode+command+cmdOutput[0]);
 
         if (command.equals(RUN_DOCKER_IMAGE_CMD) && cmdOutput[0]==null)
-            throw new IOException(CONTAINER_IN_USE_EXCEPTION);
+            return CONTAINER_IN_USE_EXCEPTION;
+        assert exitCode == 0;
 
         return cmdOutput[0];
     }
 
     private static class StreamGobbler implements Runnable {
-        private InputStream inputStream;
-        private Consumer<String> consumer;
+        private final InputStream inputStream;
+        private final Consumer<String> consumer;
 
         public StreamGobbler(InputStream inputStream, Consumer<String> consumer) {
             this.inputStream = inputStream;
@@ -93,8 +107,7 @@ public class AppInitializator {
 
         @Override
         public void run() {
-            new BufferedReader(new InputStreamReader(inputStream)).lines()
-                    .forEach(consumer);
+            new BufferedReader(new InputStreamReader(inputStream)).lines().forEach(consumer);
         }
     }
 }
