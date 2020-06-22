@@ -21,17 +21,27 @@ public class CountryController {
         Country country = countryRepository.findByCode(code);
         CountryLanguage countryLanguage = countryLanguageRepository.findByCountryCode(code);
 
-        return convertToJSON(country, countryLanguage);
+        Map<String, Object> JSON = convertToJSON(country, countryLanguage);
+        if (JSON==null) {
+            return new LinkedHashMap<String, Object>() {{
+                put("error", "Country not found");
+            }};
+        }
+        return JSON;
     }
 
     private Map<String, Object> convertToJSON(Country country, CountryLanguage countryLanguage) {
         Map<String, Object> countryJSON = new LinkedHashMap<>();
 
-        countryJSON.put("name", country.getName());
-        countryJSON.put("continent", country.getContinent());
-        countryJSON.put("population", country.getPopulation());
-        countryJSON.put("life_expectancy", country.getLifeExpectancy());
-        countryJSON.put("country_language", countryLanguage.getLanguage());
+        try {
+            countryJSON.put("name", country.getName());
+            countryJSON.put("continent", country.getContinent());
+            countryJSON.put("population", country.getPopulation());
+            countryJSON.put("life_expectancy", country.getLifeExpectancy());
+            countryJSON.put("country_language", countryLanguage.getLanguage());
+        } catch (NullPointerException e) {
+            return null;
+        }
 
         return countryJSON;
     }
