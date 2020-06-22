@@ -1,8 +1,6 @@
 package com.flairstech.workshop;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.task.TaskSchedulerCustomizer;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -11,7 +9,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
@@ -26,8 +23,8 @@ public class AppInitializator {
     final static String CHECK_DOCKER_PORT_AVAILABILITY_EXCEPTION = "Port 5432 is already in use by another Docker container";
     final static String CHECK_PORT_AVAILABILITY_CMD = "lsof -i:5432";
     final static String CHECK_PORT_AVAILABILITY_EXCEPTION = "Port 5432 is already in use";
-    final static String CONTAINER_IN_USE_EXCEPTION = "Container with name 'countriesdocker' is already in use";
-    final static String RUN_DOCKER_IMAGE_CMD = "docker run -d --name=countriesdocker -p 5432:5432 ghusta/postgres-world-db:2.4";
+    final static String DOCKER_ERROR = "Unresolved Docker error";
+    final static String RUN_DOCKER_IMAGE_CMD = "docker run -d -p 5432:5432 ghusta/postgres-world-db:2.4";
     final static String RUN_DOCKER_IMAGE_EXCEPTION = "Exception during running database Docker image";
     final static String STOP_DOCKER_CONTAINER_CMD = "docker stop ";
     final static String STOP_DOCKER_CONTAINER_EXCEPTION = "Exception during stopping database Docker container";
@@ -55,8 +52,8 @@ public class AppInitializator {
             throw new IOException(RUN_DOCKER_IMAGE_EXCEPTION);
         }
 
-        if (container.equals(CONTAINER_IN_USE_EXCEPTION))
-            throw new IOException(CONTAINER_IN_USE_EXCEPTION);
+        if (container.equals(DOCKER_ERROR))
+            throw new IOException(DOCKER_ERROR);
     }
 
     @PreDestroy
@@ -87,10 +84,9 @@ public class AppInitializator {
                 });
         Executors.newSingleThreadExecutor().submit(streamGobbler);
         int exitCode = process.waitFor();
-        System.out.println(exitCode+command+cmdOutput[0]);
 
         if (command.equals(RUN_DOCKER_IMAGE_CMD) && cmdOutput[0]==null)
-            return CONTAINER_IN_USE_EXCEPTION;
+            return DOCKER_ERROR;
         assert exitCode == 0;
 
         return cmdOutput[0];
