@@ -19,15 +19,25 @@ public class AppInitializator {
 
     //Docker proxy configuration
     String container;
-    final String RUN_DOCKER_IMAGE_CMD = "docker run -d -p 5432:5432 ghusta/postgres-world-db:2.4";
+    final String CHECK_DOCKER_PORT_AVAILABILITY_CMD = "docker ps --filter \"expose=5432\"";
+    final String CHECK_DOCKER_PORT_AVAILABILITY_EXCEPTION = "Port 5432 is already in use by another Docker container";
+    final String CHECK_PORT_AVAILABILITY_CMD = "lsof -i:5432";
+    final String CHECK_PORT_AVAILABILITY_EXCEPTION = "Port 5432 is already in use";
+    final String CONTAINER_IN_USE_EXCEPTION = "Container with name 'countriesdocker' is already in use";
+    final String RUN_DOCKER_IMAGE_CMD = "docker run -d --name=countriesdocker -p 5432:5432 ghusta/postgres-world-db:2.4";
     final String RUN_DOCKER_IMAGE_EXCEPTION = "Exception during running database Docker image";
     final String STOP_DOCKER_CONTAINER_CMD = "docker stop "+container;
     final String STOP_DOCKER_CONTAINER_EXCEPTION = "Exception during stopping database Docker container";
-    final String REMOVE_DOCKER_CONTAINER_CMD = "docker remove "+container;
+    final String REMOVE_DOCKER_CONTAINER_CMD = "docker rm "+container;
     final String REMOVE_DOCKER_CONTAINER_EXCEPTION = "Exception during removing database Docker container";
 
     @PostConstruct
-    private void init() throws IOException {
+    private void init() throws Exception {
+        if (executeBashCommand(CHECK_PORT_AVAILABILITY_CMD)!=null)
+            throw new IOException(CHECK_PORT_AVAILABILITY_EXCEPTION);
+        if (executeBashCommand(CHECK_DOCKER_PORT_AVAILABILITY_CMD)!=null)
+            throw new IOException(CHECK_DOCKER_PORT_AVAILABILITY_EXCEPTION);
+
         try {
             container = executeBashCommand(RUN_DOCKER_IMAGE_CMD);
         } catch (Exception e) {
@@ -65,6 +75,9 @@ public class AppInitializator {
         Executors.newSingleThreadExecutor().submit(streamGobbler);
         int exitCode = process.waitFor();
         assert exitCode == 0;
+
+        if (command.equals(RUN_DOCKER_IMAGE_CMD) && cmdOutput[0]==null)
+            throw new IOException(CONTAINER_IN_USE_EXCEPTION);
 
         return cmdOutput[0];
     }
