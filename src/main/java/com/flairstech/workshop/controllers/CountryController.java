@@ -1,5 +1,9 @@
-package com.flairstech.workshop;
+package com.flairstech.workshop.controllers;
 
+import com.flairstech.workshop.repositories.CountryLanguageRepository;
+import com.flairstech.workshop.repositories.CountryRepository;
+import com.flairstech.workshop.entities.Country;
+import com.flairstech.workshop.entities.CountryLanguage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

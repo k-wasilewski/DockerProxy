@@ -1,4 +1,4 @@
-package com.flairstech.workshop;
+package com.flairstech.workshop.entities;
 
 import javax.persistence.*;
 
