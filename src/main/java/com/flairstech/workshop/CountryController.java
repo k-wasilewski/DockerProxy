@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 @Controller
 public class CountryController {
@@ -26,7 +28,7 @@ public class CountryController {
     }
 
     private Map<String, Object> convertToJSON(Country country, CountryLanguage countryLanguage) {
-        Map<String, Object> countryJSON = new HashMap<>();
+        Map<String, Object> countryJSON = new LinkedHashMap<>();
 
         countryJSON.put("name", country.getName());
         countryJSON.put("continent", country.getContinent());
