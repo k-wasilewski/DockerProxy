@@ -24,9 +24,6 @@ public class Country {
     @Column(name="life_expectancy", columnDefinition = "float4")
     private int lifeExpectancy;
 
-    @Column(name="country_language")
-    private String countryLanguage;
-
     public int getCapital() {
         return capital;
     }
@@ -73,13 +70,5 @@ public class Country {
 
     public void setLifeExpectancy(int lifeExpectancy) {
         this.lifeExpectancy = lifeExpectancy;
-    }
-
-    public String getCountryLanguage() {
-        return countryLanguage;
-    }
-
-    public void setCountryLanguage(String countryLanguage) {
-        this.countryLanguage = countryLanguage;
     }
 }
