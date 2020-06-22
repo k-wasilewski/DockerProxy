@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table(name = "country_language")
 public class CountryLanguage {
     @Id
-    @Column(name = "country_code")
+    @Column(name = "country_code", columnDefinition = "bpchar")
     String countryCode;
 
     @Column(name = "language")

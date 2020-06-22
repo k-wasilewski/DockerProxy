@@ -16,17 +16,40 @@ import java.util.function.Consumer;
 public class AppInitializator {
     @Autowired
     CountryRepository countryRepository;
+
+    //Docker proxy configuration
     String container;
+    final String RUN_DOCKER_IMAGE_CMD = "docker run -d -p 5432:5432 ghusta/postgres-world-db:2.4";
+    final String RUN_DOCKER_IMAGE_EXCEPTION = "Exception during running database Docker image";
+    final String STOP_DOCKER_CONTAINER_CMD = "docker stop "+container;
+    final String STOP_DOCKER_CONTAINER_EXCEPTION = "Exception during stopping database Docker container";
+    final String REMOVE_DOCKER_CONTAINER_CMD = "docker remove "+container;
+    final String REMOVE_DOCKER_CONTAINER_EXCEPTION = "Exception during removing database Docker container";
 
     @PostConstruct
-    private void init() {
+    private void init() throws IOException {
         try {
-            container = executeBashCommand("docker run -d -p 5432:5432 ghusta/postgres-world-db:2.4");
+            container = executeBashCommand(RUN_DOCKER_IMAGE_CMD);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            throw new IOException(RUN_DOCKER_IMAGE_EXCEPTION);
         }
+    }
 
-        System.out.println(countryRepository.findById(1));
+    @PreDestroy
+    private void destr() throws IOException {
+        if (container!=null) {
+            try {
+                executeBashCommand(STOP_DOCKER_CONTAINER_CMD);
+            } catch (Exception e) {
+                throw new IOException(STOP_DOCKER_CONTAINER_EXCEPTION);
+            }
+
+            try {
+                executeBashCommand(REMOVE_DOCKER_CONTAINER_CMD);
+            } catch (Exception e) {
+                throw new IOException(REMOVE_DOCKER_CONTAINER_EXCEPTION);
+            }
+        }
     }
 
     private String executeBashCommand(String command) throws IOException, InterruptedException {
@@ -44,17 +67,6 @@ public class AppInitializator {
         assert exitCode == 0;
 
         return cmdOutput[0];
-    }
-
-    @PreDestroy
-    private void destr() {
-        if (container!=null)
-            try {
-                executeBashCommand("docker stop "+container);
-                executeBashCommand("docker remove "+container);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
     }
 
     private static class StreamGobbler implements Runnable {

@@ -6,10 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 @Controller
 public class CountryController {
@@ -19,8 +17,7 @@ public class CountryController {
     CountryLanguageRepository countryLanguageRepository;
 
     @GetMapping(value = "/{code}")
-    public @ResponseBody
-    Map<String, Object> getCountry(@PathVariable String code) {
+    public @ResponseBody Map<String, Object> getCountry(@PathVariable String code) {
         Country country = countryRepository.findByCode(code);
         CountryLanguage countryLanguage = countryLanguageRepository.findByCountryCode(code);
 

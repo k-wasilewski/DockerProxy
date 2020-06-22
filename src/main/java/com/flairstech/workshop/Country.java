@@ -9,7 +9,7 @@ public class Country {
     @Column(name = "capital")
     private int capital;
 
-    @Column(name="code")
+    @Column(name="code", columnDefinition = "bpchar")
     private String code;
 
     @Column(name="name")
@@ -18,11 +18,11 @@ public class Country {
     @Column(name="continent")
     private String continent;
 
-    @Column(name="population")
-    private String population;
+    @Column(name="population", columnDefinition = "int4")
+    private int population;
 
-    @Column(name="life_expectancy")
-    private String lifeExpectancy;
+    @Column(name="life_expectancy", columnDefinition = "float4")
+    private int lifeExpectancy;
 
     @Column(name="country_language")
     private String countryLanguage;
@@ -59,19 +59,19 @@ public class Country {
         this.continent = continent;
     }
 
-    public String getPopulation() {
+    public int getPopulation() {
         return population;
     }
 
-    public void setPopulation(String population) {
+    public void setPopulation(int population) {
         this.population = population;
     }
 
-    public String getLifeExpectancy() {
+    public int getLifeExpectancy() {
         return lifeExpectancy;
     }
 
-    public void setLifeExpectancy(String lifeExpectancy) {
+    public void setLifeExpectancy(int lifeExpectancy) {
         this.lifeExpectancy = lifeExpectancy;
     }
 
