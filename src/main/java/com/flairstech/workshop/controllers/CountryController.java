@@ -5,6 +5,8 @@ import com.flairstech.workshop.repositories.CountryRepository;
 import com.flairstech.workshop.entities.Country;
 import com.flairstech.workshop.entities.CountryLanguage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,17 +23,15 @@ public class CountryController {
     CountryLanguageRepository countryLanguageRepository;
 
     @GetMapping(value = "/{code}")
-    public @ResponseBody Map<String, Object> getCountry(@PathVariable String code) {
+    public @ResponseBody ResponseEntity<Object> getCountry(@PathVariable String code) {
         Country country = countryRepository.findByCode(code);
         CountryLanguage countryLanguage = countryLanguageRepository.findByCountryCode(code);
 
         Map<String, Object> JSON = convertToJSON(country, countryLanguage);
         if (JSON==null) {
-            return new LinkedHashMap<String, Object>() {{
-                put("error", "Country not found");
-            }};
+            return new ResponseEntity<>("INVALID_COUNTRY_CODE", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return JSON;
+        return new ResponseEntity<>(JSON, HttpStatus.OK);
     }
 
     private Map<String, Object> convertToJSON(Country country, CountryLanguage countryLanguage) {
