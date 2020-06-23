@@ -1,5 +1,6 @@
 package com.flairstech.workshop.config;
 
+import com.flairstech.workshop.exceptions.DockerProxyException;
 import com.flairstech.workshop.repositories.CountryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -24,44 +25,56 @@ public class AppInitializer {
     private String dockerContainer;
 
     @PostConstruct
-    private void init() throws Exception {
-        if (executeBashCommand(DockerProxy.CHECK_DOCKER_PORT_AVAILABILITY_CMD)!=null)
-            throw new IOException(DockerProxy.CHECK_DOCKER_PORT_AVAILABILITY_EXCEPTION);
-        if (executeBashCommand(DockerProxy.CHECK_PORT_AVAILABILITY_CMD)!=null)
-            throw new IOException(DockerProxy.CHECK_PORT_AVAILABILITY_EXCEPTION);
+    private void init()
+            throws IOException, InterruptedException, DockerProxyException {
+        if (executeBashCommand(DockerProxy
+                .CHECK_DOCKER_PORT_AVAILABILITY_CMD)!=null)
+            throw new DockerProxyException(DockerProxy
+                    .CHECK_DOCKER_PORT_AVAILABILITY_EXCEPTION);
+        if (executeBashCommand(DockerProxy
+                .CHECK_PORT_AVAILABILITY_CMD)!=null)
+            throw new DockerProxyException(DockerProxy
+                    .CHECK_PORT_AVAILABILITY_EXCEPTION);
 
         try {
-            dockerContainer = executeBashCommand(DockerProxy.RUN_DOCKER_IMAGE_CMD);
+            dockerContainer = executeBashCommand(DockerProxy
+                    .RUN_DOCKER_IMAGE_CMD);
         } catch (Exception e) {
-            throw new IOException(DockerProxy.RUN_DOCKER_IMAGE_EXCEPTION);
+            throw new DockerProxyException(DockerProxy
+                    .RUN_DOCKER_IMAGE_EXCEPTION);
         }
 
         if (executeBashCommand(DockerProxy.getIsContainerRunningCmd(dockerContainer))==null ||
                 executeBashCommand(DockerProxy.getIsContainerRunningCmd(dockerContainer)).equals("false"))
-            throw new IOException(DockerProxy.IS_CONTAINER_RUNNING_EXCEPTION);
+            throw new DockerProxyException(DockerProxy.IS_CONTAINER_RUNNING_EXCEPTION);
 
         if (dockerContainer==null)
-            throw new IOException(DockerProxy.DOCKER_ERROR);
+            throw new DockerProxyException(DockerProxy.DOCKER_ERROR);
     }
 
     @PreDestroy
-    private void destr() throws IOException {
+    private void destr() throws DockerProxyException {
         if (dockerContainer!=null) {
             try {
-                executeBashCommand(DockerProxy.getStopDockerContainerCmd(dockerContainer));
+                executeBashCommand(DockerProxy
+                        .getStopDockerContainerCmd(dockerContainer));
             } catch (Exception e) {
-                throw new IOException(DockerProxy.STOP_DOCKER_CONTAINER_EXCEPTION);
+                throw new DockerProxyException(DockerProxy
+                        .STOP_DOCKER_CONTAINER_EXCEPTION);
             }
 
             try {
-                executeBashCommand(DockerProxy.getRemoveDockerContainerCmd(dockerContainer));
+                executeBashCommand(DockerProxy
+                        .getRemoveDockerContainerCmd(dockerContainer));
             } catch (Exception e) {
-                throw new IOException(DockerProxy.REMOVE_DOCKER_CONTAINER_EXCEPTION);
+                throw new DockerProxyException(DockerProxy
+                        .REMOVE_DOCKER_CONTAINER_EXCEPTION);
             }
         }
     }
 
-    private String executeBashCommand(String command) throws IOException, InterruptedException {
+    private String executeBashCommand(String command)
+            throws IOException, InterruptedException {
         Process process;
         String[] cmdOutput = new String[1];
 
