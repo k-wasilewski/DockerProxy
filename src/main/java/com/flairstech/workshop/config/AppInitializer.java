@@ -2,6 +2,7 @@ package com.flairstech.workshop.config;
 
 import com.flairstech.workshop.repositories.CountryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +16,7 @@ import java.util.function.Consumer;
 
 @Component
 public class AppInitializer {
+    @Lazy
     @Autowired
     CountryRepository countryRepository;
     @Autowired

@@ -4,7 +4,9 @@ import com.flairstech.workshop.repositories.CountryLanguageRepository;
 import com.flairstech.workshop.repositories.CountryRepository;
 import com.flairstech.workshop.entities.Country;
 import com.flairstech.workshop.entities.CountryLanguage;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -24,8 +26,14 @@ public class CountryController {
 
     @GetMapping(value = "/{code}")
     public @ResponseBody ResponseEntity<Object> getCountry(@PathVariable String code) {
-        Country country = countryRepository.findByCode(code);
-        CountryLanguage countryLanguage = countryLanguageRepository.findByCountryCode(code);
+        Country country;
+        CountryLanguage countryLanguage;
+        try {
+            country = countryRepository.findByCode(code);
+            countryLanguage = countryLanguageRepository.findByCountryCode(code);
+        } catch (NoSuchBeanDefinitionException e) {
+            return new ResponseEntity<>("INTERNAL_ERROR", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
         Map<String, Object> JSON = convertToJSON(country, countryLanguage);
         if (JSON==null) {

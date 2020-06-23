@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DockerProxy {
-    public final static String CHECK_DOCKER_PORT_AVAILABILITY_CMD = "docker ps --filter \"expose=5432\" --format \"{{.Ports}}\"";
+    public final static String CHECK_DOCKER_PORT_AVAILABILITY_CMD = "docker ps --filter expose=5432 --format {{.Ports}}";
     public final static String CHECK_DOCKER_PORT_AVAILABILITY_EXCEPTION = "Port 5432 is already in use by another Docker container";
     public final static String CHECK_PORT_AVAILABILITY_CMD = "lsof -i:5432";
     public final static String CHECK_PORT_AVAILABILITY_EXCEPTION = "Port 5432 is already in use";
