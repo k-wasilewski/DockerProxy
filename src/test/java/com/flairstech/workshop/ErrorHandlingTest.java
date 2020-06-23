@@ -1,5 +1,6 @@
 package com.flairstech.workshop;
 
+import com.flairstech.workshop.config.AppInitializer;
 import com.flairstech.workshop.controllers.CountryController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -16,13 +16,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Transactional
 public class ErrorHandlingTest {
     @Autowired
     CountryController countryController;
 
     @Test
-    public void getCountry_shouldReturnErrorMessage_whenNoCountryIsFound() {
+    public void getCountry_shouldReturnErrorMessage_whenNoCountryIsFound()
+            throws InterruptedException {
+        while (!AppInitializer.isReady) {}  //wait for context to set up
+        Thread.sleep(5000);     //wait for database to set up
+
         //given
         String invalidCountryCode = "ABC";
 

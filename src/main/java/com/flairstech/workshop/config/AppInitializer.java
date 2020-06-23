@@ -4,6 +4,8 @@ import com.flairstech.workshop.exceptions.DockerProxyException;
 import com.flairstech.workshop.repositories.CountryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -23,6 +25,7 @@ public class AppInitializer {
     @Autowired
     DockerProxy dockerProxy;
     private String dockerContainer;
+    public static boolean isReady = false;
 
     @PostConstruct
     private void init()
@@ -105,5 +108,10 @@ public class AppInitializer {
         public void run() {
             new BufferedReader(new InputStreamReader(inputStream)).lines().forEach(consumer);
         }
+    }
+
+    @EventListener
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        isReady = true;
     }
 }
