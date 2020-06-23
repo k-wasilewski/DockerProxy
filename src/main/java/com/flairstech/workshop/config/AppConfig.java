@@ -15,7 +15,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import java.util.Properties;
 
 @Lazy
 @Configuration
@@ -24,24 +23,14 @@ import java.util.Properties;
 public class AppConfig {
 
     @Bean
-    public CountryLanguage getCountryLanguage(){
-        return new CountryLanguage();
-    }
-
-    @Bean
-    public Country getCountry(){
-        return new Country();
-    }
-
-    @Bean
-    public EntityManager getEntityManager() {
+    public EntityManager entityManager() {
         return entityManagerFactory().createEntityManager();
     }
 
     @Bean(name = "entityManagerFactory")
     public EntityManagerFactory entityManagerFactory() {
-        Properties props = new Properties();
-        return Persistence.createEntityManagerFactory("prsstnc");
+        return Persistence.
+                createEntityManagerFactory("workshop_persistence");
     }
 
     @Bean

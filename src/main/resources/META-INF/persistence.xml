@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
-    <persistence-unit name="prsstnc">
+    <persistence-unit name="workshop_persistence">
         <class>com.flairstech.workshop.entities.CountryLanguage</class>
         <class>com.flairstech.workshop.entities.Country</class>
         <properties>
