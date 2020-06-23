@@ -1,7 +1,5 @@
 package com.flairstech.workshop.config;
 
-import com.flairstech.workshop.entities.Country;
-import com.flairstech.workshop.entities.CountryLanguage;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

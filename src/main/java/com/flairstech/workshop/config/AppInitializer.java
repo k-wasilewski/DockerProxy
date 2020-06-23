@@ -26,32 +26,33 @@ public class AppInitializer {
     DockerProxy dockerProxy;
     private String dockerContainer;
     public static boolean isReady = false;
+    public static boolean test = false;
 
     @PostConstruct
     private void init()
             throws IOException, InterruptedException, DockerProxyException {
-        if (executeBashCommand(DockerProxy
+        if (!test && executeBashCommand(DockerProxy
                 .CHECK_DOCKER_PORT_AVAILABILITY_CMD)!=null)
             throw new DockerProxyException(DockerProxy
                     .CHECK_DOCKER_PORT_AVAILABILITY_EXCEPTION);
-        if (executeBashCommand(DockerProxy
+        if (!test && executeBashCommand(DockerProxy
                 .CHECK_PORT_AVAILABILITY_CMD)!=null)
             throw new DockerProxyException(DockerProxy
                     .CHECK_PORT_AVAILABILITY_EXCEPTION);
 
         try {
-            dockerContainer = executeBashCommand(DockerProxy
+            if (!test) dockerContainer = executeBashCommand(DockerProxy
                     .RUN_DOCKER_IMAGE_CMD);
         } catch (Exception e) {
             throw new DockerProxyException(DockerProxy
                     .RUN_DOCKER_IMAGE_EXCEPTION);
         }
 
-        if (executeBashCommand(DockerProxy.getIsContainerRunningCmd(dockerContainer))==null ||
+        if (!test && executeBashCommand(DockerProxy.getIsContainerRunningCmd(dockerContainer))==null ||
                 executeBashCommand(DockerProxy.getIsContainerRunningCmd(dockerContainer)).equals("false"))
             throw new DockerProxyException(DockerProxy.IS_CONTAINER_RUNNING_EXCEPTION);
 
-        if (dockerContainer==null)
+        if (!test && dockerContainer==null)
             throw new DockerProxyException(DockerProxy.DOCKER_ERROR);
     }
 
