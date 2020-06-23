@@ -23,10 +23,10 @@ public class AppInitializer {
 
     @PostConstruct
     private void init() throws Exception {
-        if (executeBashCommand(DockerProxy.CHECK_PORT_AVAILABILITY_CMD)!=null)
-            throw new IOException(DockerProxy.CHECK_PORT_AVAILABILITY_EXCEPTION);
         if (executeBashCommand(DockerProxy.CHECK_DOCKER_PORT_AVAILABILITY_CMD)!=null)
             throw new IOException(DockerProxy.CHECK_DOCKER_PORT_AVAILABILITY_EXCEPTION);
+        if (executeBashCommand(DockerProxy.CHECK_PORT_AVAILABILITY_CMD)!=null)
+            throw new IOException(DockerProxy.CHECK_PORT_AVAILABILITY_EXCEPTION);
 
         try {
             dockerContainer = executeBashCommand(DockerProxy.RUN_DOCKER_IMAGE_CMD);
@@ -34,7 +34,11 @@ public class AppInitializer {
             throw new IOException(DockerProxy.RUN_DOCKER_IMAGE_EXCEPTION);
         }
 
-        if (dockerContainer.equals(DockerProxy.DOCKER_ERROR))
+        if (executeBashCommand(DockerProxy.getIsContainerRunningCmd(dockerContainer))==null ||
+                executeBashCommand(DockerProxy.getIsContainerRunningCmd(dockerContainer)).equals("false"))
+            throw new IOException(DockerProxy.IS_CONTAINER_RUNNING_EXCEPTION);
+
+        if (dockerContainer==null)
             throw new IOException(DockerProxy.DOCKER_ERROR);
     }
 
@@ -69,7 +73,8 @@ public class AppInitializer {
 
         if (command.equals(DockerProxy.RUN_DOCKER_IMAGE_CMD) && cmdOutput[0]==null)
             return DockerProxy.DOCKER_ERROR;
-        assert exitCode == 0;
+        if (!command.equals(DockerProxy.getIsContainerRunningCmd(dockerContainer)))
+            assert exitCode == 0;
 
         return cmdOutput[0];
     }
