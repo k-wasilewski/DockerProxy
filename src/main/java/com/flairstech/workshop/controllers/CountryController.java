@@ -26,14 +26,8 @@ public class CountryController {
 
     @GetMapping(value = "/{code}")
     public @ResponseBody ResponseEntity<Object> getCountry(@PathVariable String code) {
-        Country country;
-        CountryLanguage countryLanguage;
-        try {
-            country = countryRepository.findByCode(code);
-            countryLanguage = countryLanguageRepository.findByCountryCode(code);
-        } catch (NoSuchBeanDefinitionException e) {
-            return new ResponseEntity<>("INTERNAL_ERROR", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Country country = countryRepository.findByCode(code);
+        CountryLanguage countryLanguage = countryLanguageRepository.findByCountryCode(code);
 
         Map<String, Object> JSON = convertToJSON(country, countryLanguage);
         if (JSON==null) {
