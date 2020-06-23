@@ -4,20 +4,18 @@ import com.flairstech.workshop.repositories.CountryLanguageRepository;
 import com.flairstech.workshop.repositories.CountryRepository;
 import com.flairstech.workshop.entities.Country;
 import com.flairstech.workshop.entities.CountryLanguage;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@Controller
+@RestController
 public class CountryController {
     @Autowired
     CountryRepository countryRepository;
