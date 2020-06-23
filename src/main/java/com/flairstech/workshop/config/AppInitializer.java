@@ -88,8 +88,6 @@ public class AppInitializer {
 
         if (command.equals(DockerProxy.RUN_DOCKER_IMAGE_CMD) && cmdOutput[0]==null)
             return DockerProxy.DOCKER_ERROR;
-        if (!command.equals(DockerProxy.getIsContainerRunningCmd(dockerContainer)))
-            assert exitCode == 0;
 
         return cmdOutput[0];
     }
