@@ -6,8 +6,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.LinkedHashMap;
+
 @Controller
 public class DatabaseErrorController implements ErrorController {
+
+    private static final ResponseEntity<Object> INTERNAL_ERROR_JSON =
+            new ResponseEntity<>(
+                    new LinkedHashMap<String, Object>() {{
+                        put("error message", "INTERNAL_ERROR");
+                    }},
+                    HttpStatus.INTERNAL_SERVER_ERROR);
 
     @Override
     public String getErrorPath() {
@@ -15,8 +24,8 @@ public class DatabaseErrorController implements ErrorController {
     }
 
     @RequestMapping("/error")
-    public ResponseEntity<String> handleError() {
-        return new ResponseEntity<>("INTERNAL_ERROR", HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<Object> handleError() {
+        return INTERNAL_ERROR_JSON;
     }
 }
 

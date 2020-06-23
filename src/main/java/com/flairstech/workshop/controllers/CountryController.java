@@ -24,6 +24,13 @@ public class CountryController {
     @Autowired
     CountryLanguageRepository countryLanguageRepository;
 
+    private static final ResponseEntity<Object> INVALID_COUNTRY_CODE_JSON =
+            new ResponseEntity<>(
+                    new LinkedHashMap<String, Object>() {{
+                        put("error message", "INVALID_COUNTRY_CODE");
+                    }},
+    HttpStatus.INTERNAL_SERVER_ERROR);
+
     @GetMapping(value = "/{code}")
     public @ResponseBody ResponseEntity<Object> getCountry(@PathVariable String code) {
         Country country = countryRepository.findByCode(code);
@@ -31,7 +38,7 @@ public class CountryController {
 
         Map<String, Object> JSON = convertToJSON(country, countryLanguage);
         if (JSON==null) {
-            return new ResponseEntity<>("INVALID_COUNTRY_CODE", HttpStatus.INTERNAL_SERVER_ERROR);
+            return INVALID_COUNTRY_CODE_JSON;
         }
         return new ResponseEntity<>(JSON, HttpStatus.OK);
     }
