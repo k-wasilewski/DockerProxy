@@ -31,6 +31,10 @@ public class AppInitializer {
     @PostConstruct
     private void init()
             throws IOException, InterruptedException, DockerProxyException {
+        if (executeBashCommand(DockerProxy
+                .CHECK_DOCKER_VERSION_CMD)==null)
+            throw new DockerProxyException(DockerProxy
+                .CHECK_DOCKER_PORT_AVAILABILITY_EXCEPTION);
         if (!test && executeBashCommand(DockerProxy
                 .CHECK_DOCKER_PORT_AVAILABILITY_CMD)!=null)
             throw new DockerProxyException(DockerProxy
