@@ -31,9 +31,16 @@ public class CountryController {
     @GetMapping(value = "/{code}")
     public @ResponseBody ResponseEntity<Map<String, Object>> getCountry(
             @PathVariable String code) {
-        Country country = countryRepository.findByCode(code);
-        CountryLanguage countryLanguage = countryLanguageRepository
-                .findByCountryCode(code);
+        Country country = null;
+        CountryLanguage countryLanguage = null;
+
+        try {
+            country = countryRepository.findByCode(code);
+            countryLanguage = countryLanguageRepository
+                    .findByCountryCode(code);
+        } catch (Exception e) {
+            return DatabaseErrorController.INTERNAL_ERROR_JSON;
+        }
 
         Map<String, Object> JSON = convertToJSON(country, countryLanguage);
         if (JSON==null) {
