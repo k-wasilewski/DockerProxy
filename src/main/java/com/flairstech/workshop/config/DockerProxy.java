@@ -31,7 +31,9 @@ public class DockerProxy {
     private final static String REMOVE_DOCKER_CONTAINER_CMD = "docker rm ";
     private final static String REMOVE_DOCKER_CONTAINER_EXCEPTION = "Exception during removing database Docker container";
 
-    public static void runDockerImage() throws DockerProxyException {
+    public static void setTesting(boolean isTesting) {testing=isTesting;}
+
+    static void runDockerImage() throws DockerProxyException {
         try {
             if (!testing) dockerContainer = executeBashCommand(RUN_DOCKER_IMAGE_CMD);
         } catch (Exception e) {
@@ -39,7 +41,7 @@ public class DockerProxy {
         }
     }
 
-    public static void handleDockerPreConstructExceptions()
+    static void handleDockerPreConstructExceptions()
             throws IOException, InterruptedException, DockerProxyException {
         if (executeBashCommand(CHECK_DOCKER_VERSION_CMD)==null)
             throw new DockerProxyException(CHECK_DOCKER_VERSION_EXCEPTION);
@@ -49,7 +51,7 @@ public class DockerProxy {
             throw new DockerProxyException(CHECK_PORT_AVAILABILITY_EXCEPTION);
     }
 
-    public static void handleDockerPostConstructExceptions()
+    static void handleDockerPostConstructExceptions()
             throws IOException, InterruptedException, DockerProxyException {
         if (!testing && executeBashCommand(getIsContainerRunningCmd(dockerContainer))==null ||
                 executeBashCommand(getIsContainerRunningCmd(dockerContainer)).equals("false"))
@@ -59,7 +61,7 @@ public class DockerProxy {
             throw new DockerProxyException(DOCKER_ERROR);
     }
 
-    public static void handleDockerPreDestroyExceptions()
+    static void handleDockerPreDestroyExceptions()
             throws DockerProxyException {
         if (dockerContainer!=null) {
             try {
@@ -75,8 +77,6 @@ public class DockerProxy {
             }
         }
     }
-
-    public static void setTesting(boolean isTesting) {testing=isTesting;}
 
     private static String getIsContainerRunningCmd(String dockerContainer) {
         return String.format(IS_CONTAINER_RUNNING_CMD+"%s", dockerContainer);

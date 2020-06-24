@@ -26,7 +26,7 @@ public class InvalidCountryCodeTest {
     @Test
     public void shouldReturnINVALID_COUNTRY_CODEmsg_whenNoCountryIsFound()
             throws Exception {
-        while (!AppInitializer.isReady) {}  //wait for context to set up
+        while (!AppInitializer.isReady()) {}  //wait for context to set up
         Thread.sleep(5000);     //wait for database to set up
 
         //given

@@ -20,7 +20,9 @@ import java.util.Properties;
 @ComponentScan(basePackages = "com.flairstech.workshop")
 @EnableJpaRepositories(bootstrapMode = BootstrapMode.LAZY, basePackages = "com.flairstech.workshop.repositories")
 public class AppConfig {
-    public static String testUrl;
+    private static String testUrl;
+
+    public static void setTestUrl(String url) {testUrl=url;}
 
     @Bean
     public EntityManager entityManager() {

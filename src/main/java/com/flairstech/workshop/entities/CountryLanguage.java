@@ -7,10 +7,10 @@ import javax.persistence.*;
 public class CountryLanguage {
     @Id
     @Column(name = "country_code", columnDefinition = "bpchar")
-    String countryCode;
+    private String countryCode;
 
     @Column(name = "language")
-    String language;
+    private String language;
 
     public String getCountryCode() {
         return countryCode;

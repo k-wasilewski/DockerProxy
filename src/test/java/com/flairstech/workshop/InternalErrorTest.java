@@ -48,7 +48,7 @@ public class InternalErrorTest {
     static class Initializer
             implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
-            AppConfig.testUrl = postgreSQLContainer.getJdbcUrl();
+            AppConfig.setTestUrl(postgreSQLContainer.getJdbcUrl());
         }
     }
 

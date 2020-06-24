@@ -16,10 +16,14 @@ import java.io.IOException;
 public class AppInitializer {
     @Lazy
     @Autowired
-    CountryRepository countryRepository;
+    private CountryRepository countryRepository;
     @Autowired
-    DockerProxy dockerProxy;
-    public static boolean isReady = false;
+    private DockerProxy dockerProxy;
+    private static boolean ready = false;
+
+    public static boolean isReady() {return ready;}
+
+    private static void setReady(boolean isReady) {ready=isReady;}
 
     @PostConstruct
     private void init() throws IOException, InterruptedException, DockerProxyException {
@@ -36,7 +40,7 @@ public class AppInitializer {
     }
 
     @EventListener
-    public void onApplicationEvent(ContextRefreshedEvent event) {
-        isReady = true;
+    private void onApplicationEvent(ContextRefreshedEvent event) {
+        setReady(true);
     }
 }

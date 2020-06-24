@@ -18,9 +18,9 @@ import java.util.Map;
 @RestController
 public class CountryController {
     @Autowired
-    CountryRepository countryRepository;
+    private CountryRepository countryRepository;
     @Autowired
-    CountryLanguageRepository countryLanguageRepository;
+    private CountryLanguageRepository countryLanguageRepository;
 
     public static final String ERROR_MESSAGE = "INVALID_COUNTRY_CODE";
 
