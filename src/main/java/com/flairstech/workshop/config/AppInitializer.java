@@ -34,7 +34,7 @@ public class AppInitializer {
         if (executeBashCommand(DockerProxy
                 .CHECK_DOCKER_VERSION_CMD)==null)
             throw new DockerProxyException(DockerProxy
-                .CHECK_DOCKER_PORT_AVAILABILITY_EXCEPTION);
+                .CHECK_DOCKER_VERSION_EXCEPTION);
         if (!test && executeBashCommand(DockerProxy
                 .CHECK_DOCKER_PORT_AVAILABILITY_CMD)!=null)
             throw new DockerProxyException(DockerProxy
