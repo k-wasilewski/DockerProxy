@@ -1,5 +1,6 @@
 package com.flairstech.workshop;
 
+import com.flairstech.workshop.config.AppConfig;
 import com.flairstech.workshop.config.AppInitializer;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -24,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {WorkshopApplication.class, TestDatabaseConfig.class})
+@SpringBootTest
 @ContextConfiguration(initializers = {InternalErrorTest.Initializer.class})
 @AutoConfigureMockMvc
 public class InternalErrorTest {
@@ -34,10 +35,9 @@ public class InternalErrorTest {
     @BeforeClass
     public static void setTest() throws InterruptedException{
         /**
-         * now getting "Connection to localhost:32787 refused"
+         * now getting org.postgresql.util.PSQLException
          */
         AppInitializer.test = true;
-        Thread.sleep(20000);
         postgreSQLContainer.start();
     }
 
@@ -51,12 +51,7 @@ public class InternalErrorTest {
     static class Initializer
             implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
-            System.out.println(postgreSQLContainer.getJdbcUrl());
-            TestPropertyValues.of(
-                    "hibernate.connection.url=" + postgreSQLContainer.getJdbcUrl(),
-                    "hibernate.connection.username=" + postgreSQLContainer.getUsername(),
-                    "hibernate.connection.password=" + postgreSQLContainer.getPassword()
-            ).applyTo(configurableApplicationContext.getEnvironment());
+            AppConfig.testUrl = postgreSQLContainer.getJdbcUrl();
         }
     }
 

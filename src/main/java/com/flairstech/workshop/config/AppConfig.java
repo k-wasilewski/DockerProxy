@@ -15,13 +15,14 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.sql.DataSource;
+import java.util.Properties;
 
 @Lazy
 @Configuration
 @ComponentScan(basePackages = "com.flairstech.workshop")
 @EnableJpaRepositories(bootstrapMode = BootstrapMode.LAZY, basePackages = "com.flairstech.workshop.repositories")
 public class AppConfig {
+    public static String testUrl;
 
     @Bean
     public EntityManager entityManager() {
@@ -30,6 +31,13 @@ public class AppConfig {
 
     @Bean(name = "entityManagerFactory")
     public EntityManagerFactory entityManagerFactory() {
+        Properties props = new Properties();
+        if (testUrl!=null) {
+            props.setProperty("hibernate.connection.url", testUrl);
+            return Persistence.
+                    createEntityManagerFactory("workshop_persistence", props);
+        }
+
         return Persistence.
                 createEntityManagerFactory("workshop_persistence");
     }
@@ -46,10 +54,4 @@ public class AppConfig {
     public TransactionTemplate transactionTemplate() {
         return new TransactionTemplate(transactionManager());
     }
-
-    /*@Bean(name = "hibDataSource")
-    @ConfigurationProperties(prefix="hibernate")
-    public DataSource primaryDataSource() {
-        return DataSourceBuilder.create().build();
-    }*/
 }
