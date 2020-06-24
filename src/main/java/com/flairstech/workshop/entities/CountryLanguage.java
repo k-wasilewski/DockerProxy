@@ -6,8 +6,6 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "country_language")
-@Cacheable
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class CountryLanguage {
     @Id
     @Column(name = "country_code", columnDefinition = "bpchar")
@@ -16,6 +14,9 @@ public class CountryLanguage {
     @Column(name = "language")
     private String language;
 
+    @Column(name = "is_official")
+    private boolean isOfficial;
+
     public String getCountryCode() {
         return countryCode;
     }
@@ -23,4 +24,6 @@ public class CountryLanguage {
     public String getLanguage() {
         return language;
     }
+
+    public boolean getIsOfficial() {return isOfficial;}
 }

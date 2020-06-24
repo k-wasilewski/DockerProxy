@@ -10,9 +10,6 @@ import javax.persistence.*;
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Country {
     @Id
-    @Column(name = "capital")
-    private int capital;
-
     @Column(name="code", columnDefinition = "bpchar")
     private String code;
 
@@ -27,10 +24,6 @@ public class Country {
 
     @Column(name="life_expectancy", columnDefinition = "float4")
     private int lifeExpectancy;
-
-    public int getCapital() {
-        return capital;
-    }
 
     public String getCode() {
         return code;

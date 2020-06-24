@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Lazy
 @Repository
-public interface CountryLanguageRepository extends JpaRepository<CountryLanguage, Integer> {
-    CountryLanguage findByCountryCode(String countryCode);
+public interface CountryLanguageRepository extends JpaRepository<CountryLanguage, String> {
+    CountryLanguage findByCountryCodeAndIsOfficial(String countryCode, boolean isOfficial);
 }

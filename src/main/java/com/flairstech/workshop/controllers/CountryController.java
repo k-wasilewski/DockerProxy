@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 public class CountryController {
@@ -37,9 +38,11 @@ public class CountryController {
         CountryLanguage countryLanguage;
 
         try {
-            country = countryRepository.findByCode(code);
-            countryLanguage = countryLanguageRepository
-                    .findByCountryCode(code);
+            Optional<Country> countryOptional = countryRepository.findById(code);
+            if (!countryOptional.isPresent()) country = null;
+            else country = countryOptional.get();
+            countryLanguage = countryLanguageRepository.
+                    findByCountryCodeAndIsOfficial(code, true);
         } catch (Exception e) {
             return DatabaseErrorController.INTERNAL_ERROR_JSON;
         }
