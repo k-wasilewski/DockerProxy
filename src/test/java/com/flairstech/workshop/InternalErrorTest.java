@@ -2,6 +2,7 @@ package com.flairstech.workshop;
 
 import com.flairstech.workshop.config.AppConfig;
 import com.flairstech.workshop.config.AppInitializer;
+import com.flairstech.workshop.controllers.DatabaseErrorController;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -9,7 +10,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
@@ -33,10 +33,7 @@ public class InternalErrorTest {
     private MockMvc mockMvc;
 
     @BeforeClass
-    public static void setTest() throws InterruptedException{
-        /**
-         * now getting org.postgresql.util.PSQLException
-         */
+    public static void setTest() {
         AppInitializer.test = true;
         postgreSQLContainer.start();
     }
@@ -57,13 +54,9 @@ public class InternalErrorTest {
 
     @Test
     public void shouldReturnINTERNAL_ERRORmsg_whenDatabaseIsDown() throws Exception {
-        while (!AppInitializer.isReady) {}  //wait for context to set up
-        Thread.sleep(5000);     //wait for database to set up
-
         //given
         String validUrl = "/POL";
         int INTERNAL_SERVER_ERROR_STATUS = 500;
-        String INTERNAL_ERROR_MSG = "INTERNAL_ERROR";
 
         //when, then
         mockMvc.perform(get(validUrl)
@@ -71,6 +64,6 @@ public class InternalErrorTest {
                 .andExpect(status().is(INTERNAL_SERVER_ERROR_STATUS))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("['error message']")
-                        .value(INTERNAL_ERROR_MSG));
+                        .value(DatabaseErrorController.ERROR_MESSAGE));
     }
 }

@@ -12,10 +12,12 @@ import java.util.Map;
 @RestController
 public class DatabaseErrorController implements ErrorController {
 
+    public static final String ERROR_MESSAGE = "INTERNAL_ERROR";
+
     public static final ResponseEntity<Map<String, Object>>
             INTERNAL_ERROR_JSON = new ResponseEntity<>(
                     new LinkedHashMap<String, Object>() {{
-                        put("error message", "INTERNAL_ERROR");
+                        put("error message", ERROR_MESSAGE);
                     }}, HttpStatus.INTERNAL_SERVER_ERROR);
 
     @Override

@@ -32,7 +32,6 @@ public class InvalidCountryCodeTest {
         //given
         String invalidUrl = "/ABC";
         int INTERNAL_SERVER_ERROR_STATUS = 500;
-        String INVALID_COUNTRY_CODE_MSG = "INVALID_COUNTRY_CODE";
 
         //when, then
         mockMvc.perform(get(invalidUrl)
@@ -40,6 +39,6 @@ public class InvalidCountryCodeTest {
                 .andExpect(status().is(INTERNAL_SERVER_ERROR_STATUS))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("['error message']")
-                        .value(INVALID_COUNTRY_CODE_MSG));
+                        .value(CountryController.ERROR_MESSAGE));
     }
 }
