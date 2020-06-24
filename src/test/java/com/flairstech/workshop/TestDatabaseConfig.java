@@ -1,28 +1,24 @@
-package com.flairstech.workshop.config;
+package com.flairstech.workshop;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.config.BootstrapMode;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.sql.DataSource;
 
 @Lazy
 @Configuration
-@ComponentScan(basePackages = "com.flairstech.workshop")
 @EnableJpaRepositories(bootstrapMode = BootstrapMode.LAZY, basePackages = "com.flairstech.workshop.repositories")
-public class AppConfig {
-
+@EnableTransactionManagement
+public class TestDatabaseConfig {
     @Bean
     public EntityManager entityManager() {
         return entityManagerFactory().createEntityManager();
@@ -31,7 +27,7 @@ public class AppConfig {
     @Bean(name = "entityManagerFactory")
     public EntityManagerFactory entityManagerFactory() {
         return Persistence.
-                createEntityManagerFactory("workshop_persistence");
+                createEntityManagerFactory("test_workshop_persistence");
     }
 
     @Bean
@@ -47,9 +43,4 @@ public class AppConfig {
         return new TransactionTemplate(transactionManager());
     }
 
-    /*@Bean(name = "hibDataSource")
-    @ConfigurationProperties(prefix="hibernate")
-    public DataSource primaryDataSource() {
-        return DataSourceBuilder.create().build();
-    }*/
 }

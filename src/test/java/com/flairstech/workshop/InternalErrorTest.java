@@ -14,22 +14,17 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
+
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = {WorkshopApplication.class, TestDatabaseConfig.class})
 @ContextConfiguration(initializers = {InternalErrorTest.Initializer.class})
 @AutoConfigureMockMvc
 public class InternalErrorTest {
@@ -37,11 +32,12 @@ public class InternalErrorTest {
     private MockMvc mockMvc;
 
     @BeforeClass
-    public static void setTest() {
+    public static void setTest() throws InterruptedException{
         /**
-         * still getting "Connection to localhost:5432 refused"
+         * now getting "Connection to localhost:32787 refused"
          */
         AppInitializer.test = true;
+        Thread.sleep(20000);
         postgreSQLContainer.start();
     }
 
@@ -55,6 +51,7 @@ public class InternalErrorTest {
     static class Initializer
             implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
+            System.out.println(postgreSQLContainer.getJdbcUrl());
             TestPropertyValues.of(
                     "hibernate.connection.url=" + postgreSQLContainer.getJdbcUrl(),
                     "hibernate.connection.username=" + postgreSQLContainer.getUsername(),
@@ -65,8 +62,8 @@ public class InternalErrorTest {
 
     @Test
     public void shouldReturnINTERNAL_ERRORmsg_whenDatabaseIsDown() throws Exception {
-        //while (!AppInitializer.isReady) {}  //wait for context to set up
-        //Thread.sleep(5000);     //wait for database to set up
+        while (!AppInitializer.isReady) {}  //wait for context to set up
+        Thread.sleep(5000);     //wait for database to set up
 
         //given
         String validUrl = "/POL";

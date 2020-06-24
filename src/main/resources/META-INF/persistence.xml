@@ -10,4 +10,14 @@
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL92Dialect"/>
         </properties>
     </persistence-unit>
+    <persistence-unit name="test_workshop_persistence">
+        <class>com.flairstech.workshop.entities.CountryLanguage</class>
+        <class>com.flairstech.workshop.entities.Country</class>
+        <properties>
+            <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:32787/world-db?loggerLevel=OFF"/>
+            <property name="hibernate.connection.username" value="world"/>
+            <property name="hibernate.connection.password" value="world123"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL92Dialect"/>
+        </properties>
+    </persistence-unit>
 </persistence>
