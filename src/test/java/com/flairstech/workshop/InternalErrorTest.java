@@ -1,7 +1,7 @@
 package com.flairstech.workshop;
 
 import com.flairstech.workshop.config.AppConfig;
-import com.flairstech.workshop.config.AppInitializer;
+import com.flairstech.workshop.config.DockerProxy;
 import com.flairstech.workshop.controllers.DatabaseErrorController;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -34,7 +34,7 @@ public class InternalErrorTest {
 
     @BeforeClass
     public static void setTest() {
-        AppInitializer.test = true;
+        DockerProxy.setTesting(true);
         postgreSQLContainer.start();
     }
 
