@@ -92,7 +92,7 @@ public class AppInitializer {
                     cmdOutput[0] = output;
                 });
         Executors.newSingleThreadExecutor().submit(streamGobbler);
-        int exitCode = process.waitFor();
+        process.waitFor();
 
         if (command.equals(DockerProxy.RUN_DOCKER_IMAGE_CMD) && cmdOutput[0]==null)
             return DockerProxy.DOCKER_ERROR;
